@@ -1,80 +1,82 @@
 import React, { Fragment, useState } from "react";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-const Formulario = ({crearCita}) => {
+const Formulario = ({ crearCita }) => {
+  //Crear state de Citas
+  const [cita, actualizarCita] = useState({
+    mascota: "",
+    propietario: "",
+    fecha: "",
+    hora: "",
+    sintomas: "",
+  });
 
+  const [error, actualizarError] = useState(false);
 
-    //Crear state de Citas
-        const [cita, actualizarCita] = useState({
-            mascota: '',
-            propietario: '',
-            fecha: '',
-            hora: '',
-            sintomas: ''
-        });
+  //Función que se ejecuta cada que el usuario escribe en un input
 
-        const[error, actualizarError]= useState(false)
+  const actualizarState = (e) => {
+    actualizarCita({
+      ...cita,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-    //Función que se ejecuta cada que el usuario escribe en un input
+  //extraer los valores
+  const { mascota, propietario, fecha, hora, sintomas } = cita;
 
-    const actualizarState = e => {
-        actualizarCita({
-            ...cita,
-            [e.target.name] : e.target.value
-        })
+  //Cuando envía formulario
+  const submitCita = (e) => {
+    e.preventDefault();
+
+    // Validar
+    if (
+      mascota.trim() === "" ||
+      propietario.trim() === "" ||
+      fecha.trim() === "" ||
+      hora.trim() === "" ||
+      sintomas.trim() === ""
+    ) {
+      actualizarError(true);
+      return;
     }
 
-    //extraer los valores
-    const {mascota, propietario, fecha, hora, sintomas} = cita
+    //Eliminar el mensaje previo
+    actualizarError(false);
 
-    //Cuando envía formulario
-    const submitCita = e => {
-        e.preventDefault();
+    // Asignar un ID
+    cita.id = uuidv4();
 
+    // Crear la cita
+    crearCita(cita);
 
-        // Validar
-        if (mascota.trim() === '' || propietario.trim() === '' || fecha.trim() === '' || hora.trim() === '' || sintomas.trim() === '' )
-       { actualizarError(true);
-        return;}
-
-        //Eliminar el mensaje previo
-        actualizarError(false);  
-
-        // Asignar un ID
-        cita.id=uuidv4();
-
-        // Crear la cita
-        crearCita(cita);
-
-        // Reiniciar el form
-        actualizarCita({
-            mascota: '',
-            propietario: '',
-            fecha: '',
-            hora: '',
-            sintomas: ''
-        })
-
-    }
+    // Reiniciar el form
+    actualizarCita({
+      mascota: "",
+      propietario: "",
+      fecha: "",
+      hora: "",
+      sintomas: "",
+    });
+  };
 
   return (
     <Fragment>
       <h2>Crear Cita</h2>
 
+      {error ? (
+        <p className="alerta-error">Todos los cambios son obligatorios</p>
+      ) : null}
 
-{error? <p className="alerta-error">Todos los cambios son obligatorios</p> : null}
-
-      <form
-      onSubmit = {submitCita}
-      >
+      <form onSubmit={submitCita}>
         <label>Nombre Mascota</label>
         <input
           type="text"
           name="mascota"
           className="u-full-width"
           placeholder="Nombre Mascota"
-          onChange = {actualizarState}
-value = {mascota}
+          onChange={actualizarState}
+          value={mascota}
         />
 
         <label>Nombre Dueño</label>
@@ -83,42 +85,43 @@ value = {mascota}
           name="propietario"
           className="u-full-width"
           placeholder="Nombre Dueño de la mascota"
-          onChange = {actualizarState}
-          value = {propietario}
+          onChange={actualizarState}
+          value={propietario}
         />
 
         <label>Fecha</label>
-        <input type="date" name="fecha" className="u-full-width" 
-        onChange = {actualizarState}
-        value = {fecha}
+        <input
+          type="date"
+          name="fecha"
+          className="u-full-width"
+          onChange={actualizarState}
+          value={fecha}
         />
-
 
         <label>Hora</label>
         <input
           type="time"
           name="hora"
           className="u-full-width"
-          onChange = {actualizarState}
-          value = {hora}
+          onChange={actualizarState}
+          value={hora}
         />
 
-
-<label>Sintomas</label>
+        <label>Sintomas</label>
         <textarea
-        className= "u-full-width"
-        name = "sintomas"
-        onChange = {actualizarState}
-        value = {sintomas}
+          className="u-full-width"
+          name="sintomas"
+          onChange={actualizarState}
+          value={sintomas}
         ></textarea>
 
-
         <button
-        type = "submit"
-        className="u-full-width button"
-        onChange = {actualizarState}
-        >Agregar Cita</button>
-
+          type="submit"
+          className="u-full-width button"
+          onChange={actualizarState}
+        >
+          Agregar Cita
+        </button>
       </form>
     </Fragment>
   );
